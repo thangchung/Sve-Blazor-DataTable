@@ -1,20 +1,12 @@
-﻿using Sve.Blazor.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using Sve.Blazor.DataTable.Models;
 
 namespace Sve.Blazor.DataTable.Components
 {
     public class RequestArgs<TModel>
     {
-        //public int PageNr { get; set; }
-
-        //public int PageSize { get; set; }
-
-        //public SortDirection SortDirection { get; set; }
-
-        //public string SortColumn { get; set; }
-
         public Pager Pager { get; private set; }
 
         public IList<FilterRule<TModel>> AppliedFilters { get; private set; }
@@ -33,11 +25,11 @@ namespace Sve.Blazor.DataTable.Components
 
         public Expression<Func<TModel, bool>> GetFilterExpression()
         {
-            Expression<Func<TModel, bool>> filterExpression = (e) => true;
+            Expression<Func<TModel, bool>> filterExpression = e => true;
 
             foreach (var filterRule in AppliedFilters)
             {
-                filterExpression = PredicateBuilder.And(filterExpression, filterRule.GenerateExpression());
+                filterExpression = filterExpression.And(filterRule.GenerateExpression());
             }
 
             return filterExpression;

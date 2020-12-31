@@ -1,4 +1,5 @@
-﻿@page "/serverside"
+@page "/serverside"
+@using Sve.Blazor.DataTable.Models
 
 @inject WeatherForecastService ForecastService
 
@@ -17,7 +18,7 @@
 
 @code {
     private bool firstFetch = true;
-    private Sve.Blazor.Core.Models.PagedResult<WeatherForecast> pagedForecasts = new Core.Models.PagedResult<WeatherForecast>(new List<WeatherForecast>(), pageNr: 1, pageSize: 10, 0);
+    private PagedResult<WeatherForecast> pagedForecasts = new PagedResult<WeatherForecast>(new List<WeatherForecast>(), pageNr: 1, pageSize: 10, 0);
 
     private async Task DoFetchData(RequestArgs<WeatherForecast> args)
     {

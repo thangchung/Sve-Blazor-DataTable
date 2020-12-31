@@ -1,4 +1,4 @@
-﻿@using System.Text;
+@using System.Text;
 @using System.Collections.ObjectModel;
 @using System.Linq.Dynamic.Core;
 @using System.Linq;
@@ -553,7 +553,7 @@
 
         if (UsePaging)
         {
-            Sve.Blazor.Core.Models.PagedResult<TModel>? pagedResult = null;
+          Sve.Blazor.DataTable.Models.PagedResult<TModel>? pagedResult = null;
 
             if (useFilteredResult) pagedResult = Utils.ApplyPaging(Items.AsQueryable(), new Pager(PageNr, PageSize, SortColumn, SortDirection));
             else pagedResult = Utils.ApplyPaging(AllItems.AsQueryable(), new Pager(PageNr, PageSize, SortColumn, SortDirection));

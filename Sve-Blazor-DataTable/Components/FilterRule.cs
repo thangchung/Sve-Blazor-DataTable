@@ -1,13 +1,10 @@
-﻿using Sve.Blazor.Core.Models;
 using System;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Runtime.InteropServices;
+using Sve.Blazor.DataTable.Models;
 
 namespace Sve.Blazor.DataTable.Components
 {
-    public class
-        FilterRule<TModel>
+    public class FilterRule<TModel>
     {
         public Guid Guid { get; private set; }
 
@@ -49,31 +46,29 @@ namespace Sve.Blazor.DataTable.Components
 
         public Expression<Func<TModel, bool>> GenerateExpression()
         {
-            if (Type.GetTypeCode(ExpectedValueType) == TypeCode.DateTime)
-            {
-                if (Column.DateTimeFormat == DateTimeFormat.Date) return FilterType.GenerateExpression<TModel>($"{Column.GetColumnPropertyName()}.Date", FilterValue.Date);
-                else if (Column.DateTimeFormat == DateTimeFormat.DateHourMinute)
-                {
-                    var dateExpression = FilterType.GenerateExpression<TModel>($"{Column.GetColumnPropertyName()}.Date", FilterValue.Date);
-                    var hourExpression = FilterType.GenerateExpression<TModel>($"{Column.GetColumnPropertyName()}.Hour", FilterValue.Hour);
-                    var minuteExpression = FilterType.GenerateExpression<TModel>($"{Column.GetColumnPropertyName()}.Minute", FilterValue.Minute);
-                    var p1 = PredicateBuilder.And(dateExpression, hourExpression);
-                    return PredicateBuilder.And(p1, minuteExpression);
-                }
-                else if (Column.DateTimeFormat == DateTimeFormat.DateHourMinuteSecond)
-                {
-                    return FilterType.GenerateExpression<TModel>(Column.GetColumnPropertyName(), FilterValue);
-                }
-            }
+            if (Type.GetTypeCode(ExpectedValueType) != TypeCode.DateTime)
+                return FilterType.GenerateExpression<TModel>(Column.GetColumnPropertyName(), FilterValue);
+            
+            if (Column.DateTimeFormat.Equals(DateTimeFormat.Date)) return FilterType.GenerateExpression<TModel>($"{Column.GetColumnPropertyName()}.Date", FilterValue?.Date);
 
-            return FilterType.GenerateExpression<TModel>(Column.GetColumnPropertyName(), FilterValue);
+            if (!Column.DateTimeFormat.Equals(DateTimeFormat.DateHourMinute))
+                return Column.DateTimeFormat.Equals(DateTimeFormat.DateHourMinuteSecond)
+                    ? FilterType.GenerateExpression<TModel>(Column.GetColumnPropertyName(), FilterValue)
+                    : FilterType.GenerateExpression<TModel>(Column.GetColumnPropertyName(), FilterValue);
+            
+            var dateExpression = FilterType.GenerateExpression<TModel>($"{Column.GetColumnPropertyName()}.Date", FilterValue?.Date);
+            var hourExpression = FilterType.GenerateExpression<TModel>($"{Column.GetColumnPropertyName()}.Hour", FilterValue?.Hour);
+            var minuteExpression = FilterType.GenerateExpression<TModel>($"{Column.GetColumnPropertyName()}.Minute", FilterValue?.Minute);
+            var p1 = PredicateBuilder.And(dateExpression, hourExpression);
+            
+            return PredicateBuilder.And(p1, minuteExpression);
         }
 
         private void UpdatePropertyType(Type propertyType)
         {
             if (propertyType.IsGenericType && propertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
             {
-                propertyType = Nullable.GetUnderlyingType(propertyType);
+                propertyType = Nullable.GetUnderlyingType(propertyType)!;
                 IsNullable = true;
             }
 
@@ -85,31 +80,31 @@ namespace Sve.Blazor.DataTable.Components
                 switch (Type.GetTypeCode(propertyType))
                 {
                     case TypeCode.Int16:
-                        FilterValue = default(System.Int16);
+                        FilterValue = default(short);
                         break;
                     case TypeCode.Int32:
-                        FilterValue = default(System.Int32);
+                        FilterValue = default(int);
                         break;
                     case TypeCode.Int64:
-                        FilterValue = default(System.Int64);
+                        FilterValue = default(long);
                         break;
                     case TypeCode.UInt16:
-                        FilterValue = default(System.UInt16);
+                        FilterValue = default(ushort);
                         break;
                     case TypeCode.UInt32:
-                        FilterValue = default(System.UInt32);
+                        FilterValue = default(uint);
                         break;
                     case TypeCode.UInt64:
-                        FilterValue = default(System.UInt64);
+                        FilterValue = default(ulong);
                         break;
                     case TypeCode.Double:
-                        FilterValue = default(System.Double);
+                        FilterValue = default(double);
                         break;
                     case TypeCode.Decimal:
-                        FilterValue = default(System.Decimal);
+                        FilterValue = default(decimal);
                         break;
                     case TypeCode.Byte:
-                        FilterValue = default(System.Byte);
+                        FilterValue = default(byte);
                         break;
                     case TypeCode.Boolean:
                         FilterValue = false;
@@ -127,6 +122,12 @@ namespace Sve.Blazor.DataTable.Components
                     case TypeCode.SByte:
                     case TypeCode.Single:
                         throw new Exception("Unsupported property type for filtering");
+                    case TypeCode.DBNull:
+                        break;
+                    case TypeCode.Empty:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
             }
         }
@@ -135,10 +136,12 @@ namespace Sve.Blazor.DataTable.Components
         {
             if (FilterType.ValueRequired)
             {
-                if (Type.GetTypeCode(ExpectedValueType) == TypeCode.DateTime) return $"{Column.GetColumnVisualPropertyName()}\t{FilterType.ToString()}\t{FilterValue!.ToString(Column.DateTimeFormat.Format)}";
-                else return $"{Column.GetColumnVisualPropertyName()}\t{FilterType.ToString()}\t{FilterValue}";
+                return Type.GetTypeCode(ExpectedValueType) == TypeCode.DateTime
+                    ? $"{Column.GetColumnVisualPropertyName()}\t{FilterType}\t{FilterValue!.ToString(Column.DateTimeFormat.Format)}"
+                    : $"{Column.GetColumnVisualPropertyName()}\t{FilterType}\t{FilterValue}";
             }
-            else return $"{Column.GetColumnVisualPropertyName()}\t{FilterType.ToString()}";
+
+            return $"{Column.GetColumnVisualPropertyName()}\t{FilterType}";
         }
     }
 }

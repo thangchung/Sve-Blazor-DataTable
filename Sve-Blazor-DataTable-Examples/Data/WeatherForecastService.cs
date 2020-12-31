@@ -1,10 +1,9 @@
-using Microsoft.VisualBasic.CompilerServices;
-using Sve.Blazor.Core.Models;
 using Sve.Blazor.DataTable.Components;
 using System;
 using System.Linq;
-using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
+using Sve.Blazor.DataTable.Core;
+using Sve.Blazor.DataTable.Models;
 
 namespace Sve.Blazor.DataTable.Examples.Data
 {
@@ -31,9 +30,9 @@ namespace Sve.Blazor.DataTable.Examples.Data
         }
 
         private WeatherForecast[]? generatedForecasts = null;
-        public Task<Sve.Blazor.Core.Models.PagedResult<WeatherForecast>> SearchForecastAsync(RequestArgs<WeatherForecast> args, int amount = 10)
+        public Task<PagedResult<WeatherForecast>> SearchForecastAsync(RequestArgs<WeatherForecast> args, int amount = 10)
         {
-            Sve.Blazor.Core.Models.PagedResult<WeatherForecast> pagedResult = null;
+            PagedResult<WeatherForecast> pagedResult = null;
             Pager pager = null;
 
             if (generatedForecasts == null)
@@ -60,7 +59,7 @@ namespace Sve.Blazor.DataTable.Examples.Data
 
             if(args != null) result = result.Where(args.GetFilterExpression());
 
-            pagedResult = Sve.Blazor.Core.Utils.ApplyPaging(result, pager);
+            pagedResult = Utils.ApplyPaging(result, pager);
 
             return Task.FromResult(pagedResult);
         }

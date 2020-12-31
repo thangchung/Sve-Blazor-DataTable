@@ -7,6 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sve-Blazor-DataTable", "Sve
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sve-Blazor-DataTable-Examples", "Sve-Blazor-DataTable-Examples\Sve-Blazor-DataTable-Examples.csproj", "{2B4943A9-B8B1-49FD-A813-B05C898F0DE5}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6F3062C8-EA10-4740-8F7C-884BA91655DE}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

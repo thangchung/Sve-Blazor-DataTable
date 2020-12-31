@@ -1,4 +1,4 @@
-﻿@typeparam TModel
+@typeparam TModel
 
 <div class="modal fade" id="@ModalId" tabindex="-1" role="dialog" aria-labelledby="modalTitle" aria-hidden="true">
     <div class="modal-dialog mw-100 w-75" role="document">
@@ -80,7 +80,8 @@
                                                               Attributes="filterRule.Column.HeaderFilterAttributes"
                                                               ApplyButtonCssClass="@ApplyButtonCssClass"
                                                               InputCssClass="@InputCssClass"
-                                                              DateTimeFormat="filterRule.Column.DateTimeFormat" />
+                                                              @*DateTimeFormat="filterRule.Column.DateTimeFormat"*@
+                                                              />
                                     }
 
                                     <button type="button" class="btn" @onclick="(e) => ApplyFilter(filterRule.Guid, false)">
